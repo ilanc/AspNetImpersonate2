@@ -1,7 +1,19 @@
-﻿@{
+@{
     ViewBag.Title = "About";
 }
 <h2>@ViewBag.Title.</h2>
 <h3>@ViewBag.Message</h3>
 
 <p>Use this area to provide additional information.</p>
+@System.Security.Principal.WindowsIdentity.GetCurrent().Name
+<br />
+@User.Identity.Name
+<br />
+@ViewData["Name"]
+<br />
+@{
+    var l = ((List<WebApplication1.Controllers.HomeController.BBGDataLicenseJson>)ViewData["List"])
+        .Select(x => $"<br/>{x.Mnemonic} : {x.Ticker}")
+        .Aggregate((a, b) => $"{a}\n{b}");
+}
+@Html.Raw(l);
