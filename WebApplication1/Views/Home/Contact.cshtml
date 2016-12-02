@@ -1,17 +1,59 @@
-﻿@{
-    ViewBag.Title = "Contact";
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            Testing();
+        });
+
+        var performance = window.performance;
+        var t0;
+
+        function PrintElapsed() {
+            var t1 = performance.now();
+            $('#elapsed').html(msToTime(Math.round(t1 - t0)));
+        }
+
+        function msToTime(s) {
+
+            function addZ(n) {
+                return (n < 10 ? '0' : '') + n;
+            }
+
+            var ms = s % 1000;
+            s = (s - ms) / 1000;
+            var secs = s % 60;
+            s = (s - secs) / 60;
+            var mins = s % 60;
+            var hrs = (s - mins) / 60;
+
+            return addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs) + '.' + ms;
+        }
+
+        function Testing() {
+            t0 = performance.now();
+            $.ajax({
+                url: '/home/test',
+                timeout: 600000, // 10 mins
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data, textStatus, jqXHR) {
+                    $('#test').html(`SUCCESS: data = ${data}`);
+                    PrintElapsed();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('#test').html(`ERROR!: failed<br>textStatus = ${textStatus}<br>errorThrown=${errorThrown}`);
+                    PrintElapsed();
+                }
+            });
+        }
+
+    </script>
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
-
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
-
-<address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+<div>
+    <p>
+        An AJAX request has been sent to the server. The server is configured to take 3mins to respond to this request.
+        When the response is received it will be displayed below.
+    </p>
+    <div id="test"></div>
+    <div id="elapsed"></div>
+</div>
